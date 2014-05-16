@@ -1,0 +1,27 @@
+# Compass/Ruby related
+.bundle/
+.sass-cache/
+/vendor/
+
+# Hakyll related
+/_cache/
+/_site/
+
+# Haskell related
+dist
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+.hsenv
+.cabal-sandbox/
+cabal.sandbox.config
+cabal.config
+
+# Generic
+.virtualenv
+*.pyc
+*.swp
+*.swo
+
