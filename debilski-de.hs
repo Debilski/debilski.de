@@ -47,7 +47,7 @@ main = hakyll $ do
                 >>= withItemBody (bundleFilter "sass" ["-s", "--scss", "--compass", "--style", "compressed"])
                 >>= return . fmap compressCss
 
-    match (fromList ["about.rst", "contact.markdown"]) $ do
+    match (fromList ["about.markdown", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
@@ -75,7 +75,7 @@ main = hakyll $ do
                 >>= relativizeUrls
 
 
-    match "index.html" $ do
+    match (fromList ["index.html", "index.markdown"]) $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
