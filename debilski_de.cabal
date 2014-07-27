@@ -13,4 +13,5 @@ executable debilski-de
                , hakyll >=4.5
                , pandoc
                , pandoc-types
+               , MissingH
 
