@@ -1,7 +1,9 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import qualified Data.Map as M
-import           Data.Monoid (mappend)
+import           Data.List.Utils (split)
+import           Control.Applicative
+import           Data.Monoid (mappend, mconcat)
 import           Hakyll
 import qualified Text.Pandoc.Options as P
 
@@ -46,14 +48,14 @@ main = hakyll $ do
     match (fromList ["about.markdown", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyDefaultTemplate
             >>= relativizeUrls
 
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocMathCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
-            >>= loadAndApplyTemplate "templates/default.html" (mathCtx `mappend` postCtx `mappend` defaultContext)
+            >>= loadAndApplyDefaultTemplate
             >>= relativizeUrls
 
     create ["archive.html"] $ do
@@ -67,7 +69,7 @@ main = hakyll $ do
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
-                >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+                >>= loadAndApplyDefaultTemplate
                 >>= relativizeUrls
 
 
@@ -82,13 +84,19 @@ main = hakyll $ do
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
-                >>= loadAndApplyTemplate "templates/default.html" indexCtx
+                >>= loadAndApplyDefaultTemplate
                 >>= relativizeUrls
 
     match "templates/*" $ compile templateCompiler
 
 
 --------------------------------------------------------------------------------
+
+loadAndApplyDefaultTemplate item = do
+    histCtx <- historyContext <$> getResourceFilePath
+    loadAndApplyTemplate "templates/default.html" (mathCtx `mappend` postCtx `mappend` defaultContext `mappend` histCtx) item
+
+
 postCtx :: Context String
 postCtx =
     dateField "date" "%B %e, %Y" `mappend`
@@ -126,4 +134,22 @@ mathCtx = field "mathjax" $ \item -> do
 
 
 bundleFilter cmd args = unixFilter "bundle" (["exec", cmd] ++ args)
+
+fileHistory :: FilePath -> Compiler [(String, String, String)]
+fileHistory fp = fmap extractHistory $ unixFilter "git" ["log", "--format=%h%x09%aD%x09%s", "--", fp] ""
+  where
+    extractHistory s = fmap extractLine (lines s)
+    extractLine l = (words !! 0, words !! 1, words !! 2)
+      where
+        words = split "\009" l
+
+historyContext :: FilePath -> Context b
+historyContext fp = listField "history" fields items
+  where
+    items = fileHistory fp >>= mapM makeItem
+    fields = mconcat [historyField "histhash" hash, historyField "histlog" log, historyField "histdate" date]
+    historyField name v = field name (return . v . itemBody)
+    hash (a, _, _) = a
+    date (_, a, _) = a
+    log (_, _, a) = a
 
