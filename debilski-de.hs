@@ -9,10 +9,6 @@ import Text.Pandoc.Definition
 import Text.Pandoc.Walk
 
 import Data.Char(toLower)
-import System.Process (readProcess)
-import System.IO.Unsafe
-
-
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -98,7 +94,8 @@ postCtx =
     dateField "date" "%B %e, %Y" `mappend`
     defaultContext
 
-pandocMathCompiler = pandocCompilerWithTransform readers writers applyPygments
+pandocMathCompiler :: Compiler (Item String)
+pandocMathCompiler = pandocCompilerWithTransformM readers writers applyPygments
   where
     readers = defaultHakyllReaderOptions { P.readerExtensions = P.pandocExtensions }
     writers = pandocOptions
@@ -106,19 +103,19 @@ pandocMathCompiler = pandocCompilerWithTransform readers writers applyPygments
 pandocOptions :: P.WriterOptions
 pandocOptions = defaultHakyllWriterOptions { P.writerHTMLMathMethod = P.MathML (Just "") } -- P.MathJax ""
 
-applyPygments :: Pandoc -> Pandoc
-applyPygments = walk changeBlocks
+applyPygments :: Pandoc -> Compiler Pandoc
+applyPygments = walkM changeBlocks
   where
-    changeBlocks :: Block -> Block
-    changeBlocks (CodeBlock (_, options, _) code) = (RawBlock "html" (pygments code options))
-    changeBlocks x = x
+    changeBlocks :: Block -> Compiler Block
+    changeBlocks (CodeBlock (_, options, _) code) = RawBlock "html" <$> pygments code options
+    changeBlocks x = return x
 
 -- https://gist.github.com/fizruk/6620756
-pygments:: String -> [String] -> String
+pygments:: String -> [String] -> Compiler String
 pygments code options
-         | (length options) == 1 = unsafePerformIO $ readProcess "pygmentize" ["-l", (map toLower (head options)),  "-f", "html"] code
-         | (length options) == 2 = unsafePerformIO $ readProcess "pygmentize" ["-l", (map toLower (head options)), "-O linenos=inline",  "-f", "html"] code
-         | otherwise = "<div class =\"highlight\"><pre>" ++ code ++ "</pre></div>"
+         | (length options) == 1 = unixFilter "pygmentize" ["-l", (map toLower (head options)),  "-f", "html"] code
+         | (length options) == 2 = unixFilter "pygmentize" ["-l", (map toLower (head options)), "-O linenos=inline",  "-f", "html"] code
+         | otherwise = return $ "<div class =\"highlight\"><pre>" ++ code ++ "</pre></div>"
 
 mathCtx :: Context a
 mathCtx = field "mathjax" $ \item -> do
