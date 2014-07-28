@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import qualified Data.Map as M
-import           Data.List.Utils (split)
+import           Data.List.Utils (split,join)
 import           Control.Applicative
 import           Data.Monoid (mappend, mconcat)
 import           Hakyll
@@ -96,6 +96,7 @@ main = hakyll $ do
 
 --------------------------------------------------------------------------------
 
+loadAndApplyDefaultTemplate :: Item String -> Compiler (Item String)
 loadAndApplyDefaultTemplate item = do
     histCtx <- historyContext <$> getResourceFilePath
     loadAndApplyTemplate "templates/default.html" (postCtx `mappend` defaultContext `mappend` histCtx) item
@@ -122,12 +123,17 @@ applyPygments = walkM changeBlocks
     changeBlocks (CodeBlock (_, options, _) code) = RawBlock "html" <$> pygments code options
     changeBlocks x = return x
 
--- https://gist.github.com/fizruk/6620756
+-- https://gist.github.com/fizruk/6620756 adapted and improved
 pygments:: String -> [String] -> Compiler String
-pygments code options
-         | (length options) == 1 = unixFilter "pygmentize" ["-l", (map toLower (head options)),  "-f", "html"] code
-         | (length options) == 2 = unixFilter "pygmentize" ["-l", (map toLower (head options)), "-O linenos=inline",  "-f", "html"] code
-         | otherwise = return $ "<div class =\"highlight\"><pre>" ++ code ++ "</pre></div>"
+pygments code options = unixFilter "pygmentize" pygOptions code
+                        -- return $ "<div class =\"highlight\"><pre>" ++ code ++ "</pre></div>"
+  where
+    pygOptions = ["-l", lang, "-f", format, "-O", "cssclass=" ++ cssClasses] ++ otherOpts
+    lang       = toLower <$> head options
+    format     = "html"
+    cssClasses = join " " ("highlight" : (tail options))
+    otherOpts  = if "inline_linenos" `elem` options then ["-O", "linenos=inline"]
+                   else []
 
 bundleFilter cmd args = unixFilter "bundle" (["exec", cmd] ++ args)
 
