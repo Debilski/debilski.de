@@ -25,15 +25,6 @@ div#header #navigation a {
     text-transform: uppercase;
 }
 
-div#footer {
-    border-top: solid 2px black;
-    color: #555;
-    font-size: 12px;
-    margin-top: 30px;
-    padding: 12px 0px 12px 0px;
-    text-align: right;
-}
-
 div.info {
     color: #555;
     font-size: 14px;
