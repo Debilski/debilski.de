@@ -9,6 +9,10 @@
         <link rel="stylesheet" type="text/css" href="/css/styles.css" />
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet" />
 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
     </head>
     <body>
         <div id="header">
@@ -17,11 +21,10 @@
         <div id="content" class="container">
             $body$
         </div>
-        <div id="footer">
-            Built with <a href="http://jaspervdj.be/hakyll">Hakyll</a> | Hosting: <a href="https://uberspace.de">Uberspace</a> | <a href="/about.html">Impressum</a>
-          </div>
-
-$partial("templates/history.html")$
+        <footer id="main-footer">
+          Built with <a href="http://jaspervdj.be/hakyll">Hakyll</a> | Hosting: <a href="https://uberspace.de">Uberspace</a> | <a href="/about.html">Impressum</a>
+          $partial("templates/history.html")$
+        </footer>
 
 <!-- Piwik -->
 <script type="text/javascript">

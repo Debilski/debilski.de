@@ -27,6 +27,10 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
+    match "javascripts/**" $ do
+        route   idRoute
+        compile copyFileCompiler
+
     match "scss/styles.scss" $ do
         route   $ gsubRoute "scss/" (const "css/") `composeRoutes` setExtension "css"
         compile $ getResourceString
