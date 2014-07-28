@@ -98,7 +98,7 @@ main = hakyll $ do
 
 loadAndApplyDefaultTemplate item = do
     histCtx <- historyContext <$> getResourceFilePath
-    loadAndApplyTemplate "templates/default.html" (mathCtx `mappend` postCtx `mappend` defaultContext `mappend` histCtx) item
+    loadAndApplyTemplate "templates/default.html" (postCtx `mappend` defaultContext `mappend` histCtx) item
 
 
 postCtx :: Context String
@@ -128,14 +128,6 @@ pygments code options
          | (length options) == 1 = unixFilter "pygmentize" ["-l", (map toLower (head options)),  "-f", "html"] code
          | (length options) == 2 = unixFilter "pygmentize" ["-l", (map toLower (head options)), "-O linenos=inline",  "-f", "html"] code
          | otherwise = return $ "<div class =\"highlight\"><pre>" ++ code ++ "</pre></div>"
-
-mathCtx :: Context a
-mathCtx = field "mathjax" $ \item -> do
-    metadata <- getMetadata $ itemIdentifier item
-    return $ if "mathjax" `M.member` metadata
-                  then "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"
-                  else ""
-
 
 bundleFilter cmd args = unixFilter "bundle" (["exec", cmd] ++ args)
 
