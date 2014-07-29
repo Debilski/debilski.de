@@ -31,12 +31,6 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "scss/styles.scss" $ do
-        route   $ gsubRoute "scss/" (const "css/") `composeRoutes` setExtension "css"
-        compile $ getResourceString
-            >>= withItemBody (bundleFilter "sass" ["-s", "--scss", "--compass", "--style", "compressed"])
-            >>= return . fmap compressCss
-
     match "scss/**.scss" $ do
         compile getResourceBody
 
