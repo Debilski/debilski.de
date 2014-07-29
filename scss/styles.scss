@@ -9,27 +9,56 @@
 ::-moz-selection { background: #fe57a1; text-shadow: none; }
 ::selection { background: #fe57a1; text-shadow: none; }
 
-#header {
+header#main-header {
     @extend .container;
+    margin-bottom: 30px;
+    padding: 12px 0px 0px 0px;
+    border-bottom: 2px solid black;
+
+    nav {
+        a { font-family: $headings-font-family;
+            font-weight: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 100%; margin-bottom: 0;
+        }
+    }
+}
+
+div#header #navigation a {
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 12px;
+    text-decoration: none;
+    text-transform: uppercase;
 }
 
 footer#main-footer {
     @extend .container;
+
+    #inner-footer {
+        @extend .container-fluid;
+    }
 
     border-top: solid 2px #555;
     color: #555;
     font-size: 12px;
     margin-top: 30px;
     padding: 12px 0px 12px 0px;
-    text-align: right;
+    div.pull-right { font-family: $headings-font-family; font-weight: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 100%; margin: 0; }
 }
 
 #page-history {
-    h2 { font-weight: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 100%; margin-bottom: 0; }
+    h2 { font-weight: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 100%; margin: 0; }
     ul { @extend .list-unstyled; }
     li { @extend small; }
     .history-hash {}
     .history-date {}
     .history-log {}
+}
+
+#social-icons {
+    margin: 0em 0em;
+}
+
+.btn-twitter, .btn-lastfm, .btn-instagram, .btn-github {
 }
 
