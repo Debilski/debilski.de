@@ -134,10 +134,8 @@ bundleFilter cmd args = unixFilter "bundle" (["exec", cmd] ++ args)
 fileHistory :: FilePath -> Compiler [(String, String, String)]
 fileHistory fp = fmap extractHistory $ unixFilter "git" ["log", "--format=%h%x09%aD%x09%s", "--", fp] ""
   where
-    extractHistory s = fmap extractLine (lines s)
-    extractLine l = (words !! 0, words !! 1, words !! 2)
-      where
-        words = split "\009" l
+    extractHistory s = fmap (extractLine . (split "\009")) (lines s)
+    extractLine (hash : date : log : rest) = (hash, date, log)
 
 historyContext :: FilePath -> Context b
 historyContext fp = listField "history" fields items
