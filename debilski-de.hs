@@ -1,6 +1,5 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import qualified Data.Map as M
 import           Data.List.Utils (split,join)
 import           Control.Applicative
 import           Data.Monoid (mappend, mconcat)
@@ -125,17 +124,19 @@ pygments code options = unixFilter "pygmentize" pygOptions code
     pygOptions = ["-l", lang, "-f", format, "-O", "cssclass=" ++ cssClasses] ++ otherOpts
     lang       = toLower <$> head options
     format     = "html"
-    cssClasses = join " " ("highlight" : (tail options))
+    cssClasses = join " " ("highlight" : tail options)
     otherOpts  = if "inline_linenos" `elem` options then ["-O", "linenos=inline"]
                    else []
 
+bundleFilter :: String -> [String] -> String -> Compiler String
 bundleFilter cmd args = unixFilter "bundle" (["exec", cmd] ++ args)
 
 fileHistory :: FilePath -> Compiler [(String, String, String)]
-fileHistory fp = fmap extractHistory $ unixFilter "git" ["log", "--format=%h%x09%aD%x09%s", "--", fp] ""
+fileHistory fp = extractHistory <$> unixFilter "git" ["log", "--format=%h%x09%aD%x09%s", "--", fp] ""
   where
-    extractHistory s = fmap (extractLine . (split "\009")) (lines s)
-    extractLine (hash : date : log : rest) = (hash, date, log)
+    extractHistory s = fmap (extractLine . split "\009") (lines s)
+    extractLine (hash : date : log : _) = (hash, date, log)
+    extractLine _ = ("unknown", "unknown", "unknown")
 
 historyContext :: FilePath -> Context b
 historyContext fp = listField "history" fields items
@@ -146,4 +147,3 @@ historyContext fp = listField "history" fields items
     hash (a, _, _) = a
     date (_, a, _) = a
     log (_, _, a) = a
-
