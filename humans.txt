@@ -1,0 +1,11 @@
+
+/* TEAM */
+  Main Author: Rike-Benjamin Schuppner
+  Site: debilski.de
+  Twitter: @debilski
+  Location: Berlin
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Software: hakyll, compass
+

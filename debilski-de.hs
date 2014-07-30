@@ -27,6 +27,10 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
+    match "humans.txt" $ do
+        route   idRoute
+        compile copyFileCompiler
+
     match "scss/**.scss" $ do
         compile getResourceBody
 
