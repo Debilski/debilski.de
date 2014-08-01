@@ -100,7 +100,6 @@ loadAndApplyDefaultTemplate item = do
     histCtx <- historyContext <$> getResourceFilePath
     loadAndApplyTemplate "templates/default.html" (postCtx `mappend` defaultContext `mappend` histCtx) item
 
-
 postCtx :: Context String
 postCtx =
     dateField "date" "%B %e, %Y" `mappend`
@@ -147,13 +146,13 @@ applyPygments = walkM changeBlocks >=> walkM changeInline
 pygments :: [String] -> String -> Compiler String
 pygments cls = unixFilter "pygmentize" (pygOptions cls)
   where
-    pygOptions []       = ["-g", "-f", "html"]
+    pygOptions []       = ["-g", "-f", "html"] ++ args
     pygOptions (lang:_) = ["-l", toLower <$> lang, "-f", "html"] ++ args
-      where
-        mkOpts     = concatMap $ \o -> ["-O", o]
-        args       = concat [ mkOpts ["linenos=inline"] <* guard ("inline_linenos" `elem` cls)
-                            , mkOpts ["nowrap"]
-                            ]
+
+    mkOpts     = concatMap $ \o -> ["-O", o]
+    args       = concat [ mkOpts ["linenos=inline"] <* guard ("inline_linenos" `elem` cls)
+                        , mkOpts ["nowrap"]
+                        ]
 
 bundleFilter :: String -> [String] -> String -> Compiler String
 bundleFilter cmd args = unixFilter "bundle" (["exec", cmd] ++ args)
