@@ -14,4 +14,6 @@ executable debilski-de
                , pandoc
                , pandoc-types
                , MissingH
+               , blaze-html
+               , blaze-markup
 
