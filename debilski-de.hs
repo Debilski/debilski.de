@@ -107,7 +107,8 @@ pandocMathCompiler = pandocCompilerWithTransformM readers writers applyPygments
     writers = pandocOptions
 
 pandocOptions :: P.WriterOptions
-pandocOptions = defaultHakyllWriterOptions { P.writerHTMLMathMethod = P.MathML (Just "") } -- P.MathJax ""
+pandocOptions = defaultHakyllWriterOptions { P.writerHtml5 = True
+                                           , P.writerHTMLMathMethod = P.MathML (Just "") } -- P.MathJax ""
 
 applyPygments :: Pandoc -> Compiler Pandoc
 applyPygments = walkM changeBlocks
