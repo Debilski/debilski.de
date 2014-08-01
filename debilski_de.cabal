@@ -3,8 +3,10 @@ version: 0.1
 build-type: Simple
 cabal-version: >=1.20
 
-executable debilski-de
-  main-is:	debilski-de.hs
+library
+  exposed-modules: PygmentsFilter
+                 , HistoryContext
+  hs-source-dirs:  src-lib
   default-language: Haskell2010
   build-depends: base
                , containers
@@ -16,4 +18,15 @@ executable debilski-de
                , MissingH
                , blaze-html
                , blaze-markup
+
+executable debilski-de
+  main-is:	debilski-de.hs
+  default-language: Haskell2010
+  build-depends: base
+               , containers
+               , bytestring >= 0.10.4.0
+               , process
+               , hakyll >=4.5
+               , pandoc
+               , debilski-de
 
