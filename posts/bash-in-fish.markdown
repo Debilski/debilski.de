@@ -44,5 +44,5 @@ I am not sure whether the `| psub) | psub))` part is stylistically the right thi
 
 Alternatively, one could read the file into a variable and execute `bash -c $VAR` but fish’s array based variables make this task a little unintuitive.
 
-(\*) Well, of course, there is a problem. Some packages do not work as well under OS X as they might under Linux, which means I am currently only using it for a few global Haskell packages à la Pandoc.
+(\*) Well, of course, there is a problem. Some packages do not work as well under OS X as they might under Linux, which means I am currently only using it for a few global Haskell packages à la Pandoc (although I just found out that pandoc has a homebrew *bottle* available, making installation on OS X even easier).
 
