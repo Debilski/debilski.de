@@ -1,6 +1,7 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 
+
 module PygmentsFilter
     (
       applyPygments
@@ -33,6 +34,7 @@ applyPygments = walkM changeBlocks >=> walkM changeInline
     changeInline (Code attrs@(_, cls@(_:_), _) code) = RawInline "html" <$> (wrapCode attrs <$> pygments cls code)
     changeInline x = return x
 
+    setAttrs :: Attr -> (H5.Html -> H5.Html) -> (H5.Html -> H5.Html)
     setAttrs (id_, cls, kv) tag = foldl (H5.!) tag attributes
       where
         kv' = case cls of
@@ -46,6 +48,8 @@ applyPygments = walkM changeBlocks >=> walkM changeInline
 
     wrapCode attrs code = renderMarkup $ setAttrs attrs H5.code (H5.preEscapedToHtml code)
     wrapPre attrs code = renderMarkup $ setAttrs attrs H5.div $ H5.pre (H5.preEscapedToHtml code)
+
+    mkClasses :: [String] -> String
     mkClasses (lang:other) = join " " ("highlight" : ("language-" ++ lang) : other)
     mkClasses _ = "highlight"
 
