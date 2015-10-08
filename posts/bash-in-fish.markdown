@@ -1,6 +1,7 @@
 ---
 title: Using a legacy environment with fish shell
 date: 2014-07-30
+disqus_id: bash-in-fish
 ---
 
 # Reading bash environment vars from fish shell
@@ -13,7 +14,7 @@ There is a caveat, though: The environment script currently is bash only (and au
 
 Well, at least there’s a dirty, dirty hack for that:
 
-``` {.sh}
+~~~sh
 function bash_env --description 'Executes a bash script and sets the named variables in fish'
   # bash_env script.bash VAR1 VAR2 VARN
   #
@@ -29,13 +30,13 @@ function bash_env --description 'Executes a bash script and sets the named varia
       eval "$val"
   end
 end
-```
+~~~
 
 For each specified variable name this function generates a line
 
-```sh
+~~~sh
 echo "set -gx VAR1 $VAR1"
-```
+~~~
 
 
 and appends this to the bash script before it is executed. The `echo` output is then collected and `eval`’d inside fish.
@@ -43,6 +44,23 @@ and appends this to the bash script before it is executed. The `echo` output is 
 I am not sure whether the `| psub) | psub))` part is stylistically the right thing to do. It definitely looks a bit strange. `cmd1 (cmd2 | psub)` is supposed to be (more or less?) equivalent to the bashism `cmd1 <(cmd2)`, which means that the output of `cmd2` will be written into a virtual file whose virtual name will be given as an argument to `cmd1`. It is called *process substitution*, by the way.
 
 Alternatively, one could read the file into a variable and execute `bash -c $VAR` but fish’s array based variables make this task a little unintuitive.
+
+## Usage
+
+Now, we can run bash scripts, specify which variables to extract and then re-use them in fish afterwards:
+
+~~~sh
+
+# $HOME/.config/fish/config.fish
+# ...
+
+bash_env /Users/rike/.nix-profile/etc/profile.d/nix.sh NIX_LINK NIX_PATH
+
+# adapt the $PATH variable accordingly
+set PATH $NIX_LINK/bin $PATH
+
+# $NIX_PATH is simply exported
+~~~
 
 (\*) Well, of course, there is a problem. Some packages do not work as well under OS X as they might under Linux, which means I am currently only using it for a few global Haskell packages à la Pandoc (although I just found out that pandoc has a homebrew *bottle* available, making installation on OS X even easier).
 

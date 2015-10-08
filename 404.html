@@ -1,0 +1,36 @@
+---
+title: 404 :: not found
+---
+
+<h1>404</h1>
+
+<div style="word-wrap:break-word;" id="fourOfour">
+    404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound404notfound
+</div>
+
+<script>
+    var orig = $('#fourOfour').text().trim();
+//    text = text.replace(/(.)/g, '<span class=wrapped>$1</span>');
+    //    $('#fourOfour').html(text);
+
+    String.prototype.wrapIdx = function(idx, cb) {
+        return (this.slice(0, idx) + cb(this[idx]) + this.slice(idx + 1));
+    };
+
+    var idx = 0;
+    window.setInterval(function(){
+        var text = orig.wrapIdx(idx, function(chr) { return "<span id='four0four-highlight'>" + chr + "</span>"; });
+
+        $('#fourOfour').html(text);
+        if (Math.random() > 0.3)
+            { idx = idx + 1; }
+        else
+            { idx = idx - 1; }
+        idx = (idx + orig.length) % orig.length;
+    }, 200);
+</script>
+
+<style>
+    #four0four-highlight { color: #fe57a1; }
+</style>
+

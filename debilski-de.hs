@@ -47,10 +47,16 @@ main = hakyll $ do
             >>= loadAndApplyDefaultTemplate
             >>= relativizeUrls
 
+    match (fromList ["404.html"]) $ do
+        route idRoute
+        compile $ getResourceBody
+            >>= loadAndApplyDefaultTemplate
+            >>= relativizeUrls
+
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocMathCompiler
-            >>= loadAndApplyTemplate "templates/post.html"    postCtx
+            >>= loadAndApplyTemplate "templates/post.html"    (postCtx `mappend` disqusCtx)
             >>= loadAndApplyDefaultTemplate
             >>= relativizeUrls
 
@@ -96,7 +102,12 @@ loadAndApplyDefaultTemplate item = do
 postCtx :: Context String
 postCtx =
     dateField "date" "%B %e, %Y" `mappend`
+    dateField "datetime" "%Y-%m-%d" `mappend`
     defaultContext
+
+disqusCtx :: Context String
+disqusCtx =
+    constField "disqus_shortname" "debilski-de"
 
 pandocMathCompiler :: Compiler (Item String)
 pandocMathCompiler = pandocCompilerWithTransformM readers writers applyPygments

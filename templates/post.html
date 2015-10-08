@@ -1,10 +1,12 @@
-<div class="info">
-    Posted on $date$
-    $if(author)$
-        by $author$
-    $endif$
-</div>
-
 <article>
-    $body$
+  <header class="info">
+    Posted on <time itemprop="dateCreated" datetime="$datetime$">$date$</time>
+    $if(author)$
+    by $author$
+    $endif$
+  </header>
+
+  $body$
+
+  $partial("templates/disqus.html")$
 </article>
